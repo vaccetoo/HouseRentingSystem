@@ -16,9 +16,18 @@ namespace HouseRentingSystem.Infrastructure.Data.Configuration
 
 			builder.
 				HasOne(h => h.Agent)
-				.WithMany()
+				.WithMany(а => а.Houses)
 				.HasForeignKey(h => h.AgentId)
 				.OnDelete(DeleteBehavior.Restrict);
+
+			var data = new SeedDataBase();
+
+			builder.HasData(new List<House>() 
+			{ 
+				data.FirstHouse,
+				data.SecondHouse,
+				data.ThirdHouse
+			});
 		}
 	}
 }
