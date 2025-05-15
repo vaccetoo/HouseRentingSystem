@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using HouseRentingSystem.Core.Models.Home;
 using HouseRentingSystem.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,10 @@ namespace HouseRentingSystem.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return View(new IndexViewModel());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
