@@ -20,7 +20,14 @@ namespace Microsoft.Extensions.DependencyInjection
 
 		public static IServiceCollection AddApplicationIdentity(this IServiceCollection services, IConfiguration configuration)
 		{
-			services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+			services.AddDefaultIdentity<IdentityUser>(options =>
+			{
+				options.SignIn.RequireConfirmedAccount = false;
+				options.Password.RequireNonAlphanumeric = false;
+				options.Password.RequireDigit = true;
+				options.Password.RequireLowercase = true;
+				options.Password.RequireUppercase = true;
+			})
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
 			return services;
