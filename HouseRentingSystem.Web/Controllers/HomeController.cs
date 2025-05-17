@@ -22,7 +22,7 @@ namespace HouseRentingSystem.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var model = await _houseService.LastThreeHouses();
+            var model = await _houseService.LastThreeHousesAsync();
 
             return View(model);
         }
