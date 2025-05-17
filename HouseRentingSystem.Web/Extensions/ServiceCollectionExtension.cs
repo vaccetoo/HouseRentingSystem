@@ -40,6 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddScoped<IHouseService, HouseService>();
+			services.AddScoped<IAgentService, AgentService>();
 
 			return services;
 		}
