@@ -15,7 +15,7 @@ namespace HouseRentingSystem.Core.Services
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
+		public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHousesAsync()
 		{
 			return await _unitOfWork.AllAsNoTracking<House>()
 				.OrderByDescending(h => h.Id)
