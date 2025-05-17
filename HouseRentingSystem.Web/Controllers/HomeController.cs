@@ -1,11 +1,12 @@
 using HouseRentingSystem.Core.Contracts;
 using HouseRentingSystem.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace HouseRentingSystem.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHouseService _houseService;
@@ -17,6 +18,7 @@ namespace HouseRentingSystem.Web.Controllers
             _houseService = houseService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index()
         {

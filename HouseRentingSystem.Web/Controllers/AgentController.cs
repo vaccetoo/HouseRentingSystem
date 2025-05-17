@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HouseRentingSystem.Web.Controllers
 {
-	[Authorize]
-	public class AgentController : Controller
+	public class AgentController : BaseController
 	{
 		[HttpGet]
 		public async Task<IActionResult> Index()
