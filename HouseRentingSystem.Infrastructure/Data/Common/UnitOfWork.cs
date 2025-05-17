@@ -11,20 +11,39 @@ namespace HouseRentingSystem.Infrastructure.Data.Common
 			_context = context;
 		}
 
+		// Add entity to DbContext
+		public async Task AddAsync<TEntity>(TEntity entity) where TEntity : class
+		{
+			await GetDbSet<TEntity>().AddAsync(entity);
+		}
+
 		// Returns specific DBSet with change tracker
 		public IQueryable<TEntity> All<TEntity>() where TEntity : class
-			=> GetDbSet<TEntity>();
+		{
+			return GetDbSet<TEntity>();
+		}
 
 		// eturns specific DBSet without change tracker
 		public IQueryable<TEntity> AllAsNoTracking<TEntity>() where TEntity : class
-			=> GetDbSet<TEntity>().AsNoTracking();
+		{
+			return GetDbSet<TEntity>().AsNoTracking();
+		}
 
 		// Dispose context when needed
 		public void Dispose()
-			=> _context.Dispose();
+		{
+			_context.Dispose();
+		}
+
+		public async Task<int> SaveChangesAsync()
+		{
+			return await _context.SaveChangesAsync();
+		}
 
 		// Returns specific DbSet from context
 		private DbSet<TEntity> GetDbSet<TEntity>() where TEntity : class
-			=> _context.Set<TEntity>();
+		{
+			return _context.Set<TEntity>();
+		}
 	}
 }
