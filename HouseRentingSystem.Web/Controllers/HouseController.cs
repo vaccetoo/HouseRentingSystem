@@ -1,11 +1,24 @@
-﻿using HouseRentingSystem.Core.Models.House;
+﻿using HouseRentingSystem.Core.Contracts;
+using HouseRentingSystem.Core.Models.House;
+using HouseRentingSystem.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HouseRentingSystem.Web.Controllers
 {
 	public class HouseController : BaseController
 	{
+		private readonly IHouseService _houseService;
+		private readonly IAgentService _agentService;
+
+		public HouseController(IHouseService houseService,
+			IAgentService agentService)
+		{
+			_houseService = houseService;
+			_agentService = agentService;
+		}
+
 		[HttpGet]
 		[AllowAnonymous]
 		public async Task<IActionResult> Index()
@@ -32,15 +45,44 @@ namespace HouseRentingSystem.Web.Controllers
 		}
 
 		[HttpGet]
+		[MustBeAnAgent]
 		public async Task<IActionResult> Add()
 		{
-			return View();
+			var model = new HouseFormModel()
+			{
+				Categories = await _houseService.AllCategoriesAsync()
+			};
+
+			return View(model);
 		}
 
 		[HttpPost]
+		[MustBeAnAgent]
 		public async Task<IActionResult> Add(HouseFormModel model)
 		{
-			return RedirectToAction(nameof(Details), new { id = 1 });
+			if (!await _houseService.CategoryExcistAsync(model.CategoryId))
+			{
+				ModelState.AddModelError(nameof(model.CategoryId), "Wrong Category");
+			}
+
+			if (!ModelState.IsValid)
+			{
+				model.Categories = await _houseService.AllCategoriesAsync();
+				return View(model);
+			}
+
+			string? userId = User.Id();
+
+			if (userId == null)
+			{
+				return Unauthorized();
+			}
+
+			int? agentId = await _agentService.GetAgentIdAsync(userId);
+
+			int newHouseId = await _houseService.CreateAsync(model, agentId ?? 0);
+
+			return RedirectToAction(nameof(Details), new { id = newHouseId });
 		}
 
 		[HttpGet]

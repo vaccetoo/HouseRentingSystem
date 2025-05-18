@@ -8,5 +8,7 @@
 		public const string PhoneNumberErrorMessage = "Phone number already excist. Try another one.";
 
 		public const string AgentRentsErrorMessage = "You should have no rents to become an agent.";
+
+		public const string PriceErrorMessage = "Price per month must be a positive number and less than 2000!";
 	}
 }

@@ -55,5 +55,11 @@ namespace HouseRentingSystem.Core.Services
 				throw new ArgumentNullException(nameof(userId), "User ID can not be null!");
 			}
 		}
+
+		public async Task<int?> GetAgentIdAsync(string userId)
+		{
+			return (await _unitOfWork.AllAsNoTracking<Agent>()
+				.FirstOrDefaultAsync(a => a.UserId == userId))?.Id;
+		}
 	}
 }

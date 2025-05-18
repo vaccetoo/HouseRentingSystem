@@ -18,8 +18,8 @@
 
 		public const int UrlMaxLength = 1250;
 
-		public const decimal MinPricePerMonth = 0M;
-		public const decimal MaxPricePerMonth = 2000M;
+		public const double MinPricePerMonth = 0;
+		public const double MaxPricePerMonth = 2000;
 
 		// Common validation constants
 		public const int Precision = 18;
