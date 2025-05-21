@@ -21,11 +21,15 @@ namespace HouseRentingSystem.Web.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(AllHousesQueryModel queryModel)
 		{
-			var model = new AllHousesQueryModel();
+			var serviceModel = await _houseService.AllAsync(queryModel);
 
-			return View(model);
+			queryModel.Houses = serviceModel.Houses;
+			queryModel.TotalHousesCount = serviceModel.TotalHousesCount;
+			queryModel.Categories = await _houseService.AllCategoriesNamesAsync();
+
+			return View(queryModel);
 		}
 
 		[HttpGet]

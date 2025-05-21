@@ -9,5 +9,7 @@ namespace HouseRentingSystem.Core.Contracts
 		Task<IEnumerable<HouseCategoryServiceModel>> AllCategoriesAsync();
 		Task<bool> CategoryExcistAsync(int categoryId);
 		Task<int> CreateAsync(HouseFormModel model, int agentId);
+		Task<HouseQueryServiceModel> AllAsync(AllHousesQueryModel model);
+		Task<IEnumerable<string>> AllCategoriesNamesAsync();
 	}
 }
