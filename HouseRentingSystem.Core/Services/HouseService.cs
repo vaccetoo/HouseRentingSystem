@@ -6,8 +6,6 @@ using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Common;
 using HouseRentingSystem.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Linq;
 
 namespace HouseRentingSystem.Core.Services
 {
@@ -150,10 +148,57 @@ namespace HouseRentingSystem.Core.Services
 				.FirstOrDefaultAsync();
 		}
 
+		public async Task EditAsync(int houseId, HouseFormModel model)
+		{
+			var entity = await _unitOfWork.GetByIdAsync<House>(houseId);
+
+			if (entity != null)
+			{
+				entity.Title = model.Title;
+				entity.Description = model.Description;
+				entity.ImageURL = model.ImageURL;
+				entity.CategoryId = model.CategoryId;
+				entity.Address = model.Address;
+				entity.PricePerMonth = model.PricePerMonth;
+
+				await _unitOfWork.SaveChangesAsync();
+			}
+		}
+
 		public async Task<bool> ExcistByIdAsync(int id)
 		{
 			return await _unitOfWork.AllAsNoTracking<House>()
 									.AnyAsync(h => h.Id == id);
+		}
+
+		public async Task<HouseFormModel?> GetHouseFormModelByIdAsync(int id)
+		{
+			var model = await _unitOfWork.AllAsNoTracking<House>()
+				.Where(h => h.Id == id)
+				.Select(h => new HouseFormModel()
+				{
+					Address = h.Address,
+					PricePerMonth = h.PricePerMonth,
+					CategoryId = h.CategoryId,
+					Description = h.Description,
+					ImageURL = h.ImageURL,
+					Title = h.Title,
+				})
+				.FirstOrDefaultAsync();
+
+			if (model != null)
+			{
+				model.Categories = await AllCategoriesAsync();
+			}
+
+			return model;
+		}
+
+		public async Task<bool> HasAgentWithIdAsync(int houseId, string? userId)
+		{
+			return await _unitOfWork.AllAsNoTracking<House>()
+				.AnyAsync(h => h.Id == houseId &&
+						  h.Agent.UserId == userId);
 		}
 
 		public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHousesAsync()
@@ -170,7 +215,6 @@ namespace HouseRentingSystem.Core.Services
 				.ToListAsync();
 				
 		}
-
 
 	}
 }

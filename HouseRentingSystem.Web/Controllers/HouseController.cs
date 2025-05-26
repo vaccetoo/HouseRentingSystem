@@ -115,7 +115,17 @@ namespace HouseRentingSystem.Web.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Edit(int id)
 		{
-			var model = new HouseFormModel();
+			if(!await _houseService.ExcistByIdAsync(id))
+			{
+				return BadRequest();
+			}
+
+			if(!await _houseService.HasAgentWithIdAsync(id, User.Id()))
+			{
+				return Unauthorized();
+			}
+
+			var model = await _houseService.GetHouseFormModelByIdAsync(id);
 
 			return View(model);
 		}
@@ -123,7 +133,31 @@ namespace HouseRentingSystem.Web.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Edit(int id, HouseFormModel model)
 		{
-			return RedirectToAction(nameof(Details), new { id = 1 });
+			if (!await _houseService.ExcistByIdAsync(id))
+			{
+				return BadRequest();
+			}
+
+			if (!await _houseService.HasAgentWithIdAsync(id, User.Id()))
+			{
+				return Unauthorized();
+			}
+
+			if (!await _houseService.CategoryExcistAsync(model.CategoryId))
+			{
+				ModelState.AddModelError(nameof(model.CategoryId), "Wrong Category");
+			}
+
+			if (!ModelState.IsValid)
+			{
+				model.Categories = await _houseService.AllCategoriesAsync();
+
+				return View(model);
+			}
+
+			await _houseService.EditAsync(id, model);
+
+			return RedirectToAction(nameof(Details), new { id = id });
 		}
 
 		[HttpGet]
