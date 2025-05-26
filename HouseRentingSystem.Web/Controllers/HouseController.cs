@@ -61,7 +61,12 @@ namespace HouseRentingSystem.Web.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Details(int id)
 		{
-			var model = new HouseDetailsViewModel();
+			if(!await _houseService.ExcistByIdAsync(id))
+			{
+				return BadRequest();
+			}
+
+			var model = await _houseService.DetailsByIdAsync(id);
 
 			return View(model);
 		}
@@ -124,13 +129,13 @@ namespace HouseRentingSystem.Web.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var model = new HouseDetailsViewModel();
+			var model = new HouseDetailsServiceModel();
 
 			return View(model);	
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Delete(HouseDetailsViewModel model)
+		public async Task<IActionResult> Delete(HouseDetailsServiceModel model)
 		{
 			return RedirectToAction(nameof(Index));
 		}

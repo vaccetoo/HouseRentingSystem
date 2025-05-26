@@ -13,5 +13,7 @@ namespace HouseRentingSystem.Core.Contracts
 		Task<IEnumerable<string>> AllCategoriesNamesAsync();
 		Task<IEnumerable<HouseServiceModel>> AllHousesByAgentIdAsync(int agentId);
 		Task<IEnumerable<HouseServiceModel>> AllHousesByUserIdAsync(string useerId);
+		Task<bool> ExcistByIdAsync(int id);
+		Task<HouseDetailsServiceModel?> DetailsByIdAsync(int id);
 	}
 }

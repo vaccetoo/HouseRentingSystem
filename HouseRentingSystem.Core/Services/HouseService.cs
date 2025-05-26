@@ -1,5 +1,6 @@
 ﻿using HouseRentingSystem.Core.Contracts;
 using HouseRentingSystem.Core.Enumerations;
+using HouseRentingSystem.Core.Models.Agent;
 using HouseRentingSystem.Core.Models.Home;
 using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Common;
@@ -124,6 +125,35 @@ namespace HouseRentingSystem.Core.Services
 			await _unitOfWork.SaveChangesAsync();
 
 			return entity.Id;
+		}
+
+		public async Task<HouseDetailsServiceModel?> DetailsByIdAsync(int id)
+		{
+			return await _unitOfWork.AllAsNoTracking<House>()
+				.Where(h => h.Id == id)
+				.Select(h => new HouseDetailsServiceModel()
+				{
+					Id = h.Id,
+					Title = h.Title,
+					Description = h.Description,
+					ImageURL = h.ImageURL,
+					PricePerMonth= h.PricePerMonth,
+					IsRented = h.RenterId != null,
+					Address = h.Address,
+					Category = h.Category.Name,
+					Agent = new AgentServiceModel()
+					{
+						PhoneNumber = h.Agent.PhoneNumber,
+						Email = h.Agent.User.Email
+					}
+				})
+				.FirstOrDefaultAsync();
+		}
+
+		public async Task<bool> ExcistByIdAsync(int id)
+		{
+			return await _unitOfWork.AllAsNoTracking<House>()
+									.AnyAsync(h => h.Id == id);
 		}
 
 		public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHousesAsync()
