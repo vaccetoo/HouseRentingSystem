@@ -35,7 +35,25 @@ namespace HouseRentingSystem.Web.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Mine()
 		{
-			var model = new AllHousesQueryModel();
+			string? userId = User.Id();
+
+			if (userId == null)
+			{
+				return Unauthorized();
+			}
+
+			IEnumerable<HouseServiceModel> model;
+
+			if (await _agentService.ExcistByIdAsync(userId))
+			{
+				int agentId = await _agentService.GetAgentIdAsync(userId) ?? 0;
+
+				model = await _houseService.AllHousesByAgentIdAsync(agentId);
+			}
+			else
+			{
+				model = await _houseService.AllHousesByUserIdAsync(userId);
+			}
 
 			return View(model);
 		}
