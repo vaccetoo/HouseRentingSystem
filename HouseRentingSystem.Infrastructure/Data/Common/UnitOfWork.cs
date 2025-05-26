@@ -35,6 +35,12 @@ namespace HouseRentingSystem.Infrastructure.Data.Common
 			_context.Dispose();
 		}
 
+		// Returns specific entity by its id
+		public async Task<TEntity?> GetByIdAsync<TEntity>(object id) where TEntity : class
+		{
+			return await GetDbSet<TEntity>().FindAsync(id);
+		}
+
 		public async Task<int> SaveChangesAsync()
 		{
 			return await _context.SaveChangesAsync();

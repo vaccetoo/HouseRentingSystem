@@ -6,5 +6,6 @@
 		IQueryable<TEntity> AllAsNoTracking<TEntity>() where TEntity : class;
 		Task AddAsync<TEntity>(TEntity entity) where TEntity : class;
 		Task<int> SaveChangesAsync();
+		Task<TEntity?> GetByIdAsync<TEntity> (object id) where TEntity : class; 
 	}
 }
