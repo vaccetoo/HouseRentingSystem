@@ -5,6 +5,7 @@ using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Common;
 using HouseRentingSystem.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 
 namespace HouseRentingSystem.Core.Services
@@ -44,7 +45,7 @@ namespace HouseRentingSystem.Core.Services
 				.OrderBy(h => h.PricePerMonth),
 
 				HouseSorting.NotRentedFirst => houses
-				.OrderBy(H => H.RenterId == null)
+				.OrderBy(h => h.RenterId != null)
 				.ThenByDescending(h => h.Id),
 
 				_ => houses
@@ -56,15 +57,7 @@ namespace HouseRentingSystem.Core.Services
 			var housesServiceModel = await houses
 				.Skip((model.CurrentPage - 1) * model.HousesPerPage)
 				.Take(model.HousesPerPage)
-				.Select(h => new HouseServiceModel()
-				{
-					Id = h.Id,
-					Address = h.Address,
-					ImageURL = h.ImageURL,
-					IsRented = h.RenterId != null,
-					PricePerMonth = h.PricePerMonth,
-					Title = h.Title
-				})
+				.ProjectToHouseServiceModel()
 				.ToListAsync();
 
 			return new HouseQueryServiceModel()
@@ -89,6 +82,22 @@ namespace HouseRentingSystem.Core.Services
 		{
 			return await _unitOfWork.AllAsNoTracking<Category>()
 				.Select(c => c.Name)
+				.ToListAsync();
+		}
+
+		public async Task<IEnumerable<HouseServiceModel>> AllHousesByAgentIdAsync(int agentId)
+		{
+			return await _unitOfWork.AllAsNoTracking<House>()
+				.Where(h => h.AgentId == agentId)
+				.ProjectToHouseServiceModel()
+				.ToListAsync();
+		}
+
+		public async Task<IEnumerable<HouseServiceModel>> AllHousesByUserIdAsync(string userId)
+		{
+			return await _unitOfWork.AllAsNoTracking<House>()
+				.Where(h => h.RenterId == userId)
+				.ProjectToHouseServiceModel()
 				.ToListAsync();
 		}
 
