@@ -207,6 +207,34 @@ namespace HouseRentingSystem.Core.Services
 						  h.Agent.UserId == userId);
 		}
 
+		public async Task<bool> IsRentedAsync(int houseId)
+		{
+			var entity = await _unitOfWork.GetByIdAsync<House>(houseId);
+
+			bool isRented = false;
+
+			if (entity != null)
+			{
+				isRented = entity.RenterId != null;
+			}
+
+			return isRented;
+		}
+
+		public async Task<bool> IsRentedByUserWithIdAsync(int houseId, string? userId)
+		{
+			var entity = await _unitOfWork.GetByIdAsync<House>(houseId);
+
+			bool isRentedByGivenUser = false;
+
+			if (entity != null)
+			{
+				isRentedByGivenUser = entity.RenterId == userId;
+			}
+
+			return isRentedByGivenUser;
+		}
+
 		public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHousesAsync()
 		{
 			return await _unitOfWork.AllAsNoTracking<House>()
@@ -222,5 +250,26 @@ namespace HouseRentingSystem.Core.Services
 				
 		}
 
+		public async Task LeaveAsync(int houseId)
+		{
+			var entity = await _unitOfWork.GetByIdAsync<House>(houseId);
+
+			if (entity != null)
+			{
+				entity.RenterId = null;
+				await _unitOfWork.SaveChangesAsync();
+			}
+		}
+
+		public async Task RentAsync(int houseId, string? userId)
+		{
+			var entity = await _unitOfWork.GetByIdAsync<House>(houseId);
+
+			if (entity != null)
+			{
+				entity.RenterId = userId;
+				await _unitOfWork.SaveChangesAsync();
+			}
+		}
 	}
 }
