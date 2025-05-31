@@ -125,6 +125,12 @@ namespace HouseRentingSystem.Core.Services
 			return entity.Id;
 		}
 
+		public async Task DeleteAsync(int houseId)
+		{
+			await _unitOfWork.DeleteAsync<House>(houseId);
+			await _unitOfWork.SaveChangesAsync();
+		}
+
 		public async Task<HouseDetailsServiceModel?> DetailsByIdAsync(int id)
 		{
 			return await _unitOfWork.AllAsNoTracking<House>()

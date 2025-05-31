@@ -7,5 +7,6 @@
 		Task AddAsync<TEntity>(TEntity entity) where TEntity : class;
 		Task<int> SaveChangesAsync();
 		Task<TEntity?> GetByIdAsync<TEntity> (object id) where TEntity : class; 
+		Task DeleteAsync<TEntity> (object id) where TEntity : class;
 	}
 }

@@ -163,14 +163,44 @@ namespace HouseRentingSystem.Web.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var model = new HouseDetailsServiceModel();
+			if(!await _houseService.ExcistByIdAsync(id))
+			{
+				return BadRequest();
+			}
 
-			return View(model);	
+			if (!await _houseService.HasAgentWithIdAsync(id, User.Id()))
+			{
+				return Unauthorized();
+			}
+
+			var house = await _houseService.DetailsByIdAsync(id);
+
+			var model = new HouseDetailsViewModel()
+			{
+				Id = house.Id,
+				Address = house.Address,
+				ImageURL = house.ImageURL,
+				Title = house.Title,
+			};
+
+			return View(model);
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> Delete(HouseDetailsServiceModel model)
 		{
+			if (!await _houseService.ExcistByIdAsync(model.Id))
+			{
+				return BadRequest();
+			}
+
+			if (!await _houseService.HasAgentWithIdAsync(model.Id, User.Id()))
+			{
+				return Unauthorized();
+			}
+
+			await _houseService.DeleteAsync(model.Id);
+
 			return RedirectToAction(nameof(Index));
 		}
 

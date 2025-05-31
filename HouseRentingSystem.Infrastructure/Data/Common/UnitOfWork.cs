@@ -29,6 +29,17 @@ namespace HouseRentingSystem.Infrastructure.Data.Common
 			return GetDbSet<TEntity>().AsNoTracking();
 		}
 
+		// Deletes specific entity
+		public async Task DeleteAsync<TEntity>(object id) where TEntity : class
+		{
+			TEntity? entity = await GetByIdAsync<TEntity>(id);
+
+			if (entity != null)
+			{
+				GetDbSet<TEntity>().Remove(entity);
+			}
+		}
+
 		// Dispose context when needed
 		public void Dispose()
 		{
